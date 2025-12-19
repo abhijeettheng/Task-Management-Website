@@ -3,20 +3,28 @@ const taskInput = document.getElementById("taskInput");
 const dueDateInput = document.getElementById("dueDate");
 const priorityInput = document.getElementById("priority");
 
-// Add Task
 function addTask() {
   const taskText = taskInput.value.trim();
   const dueDate = dueDateInput.value;
   const priority = priorityInput.value;
 
-  if (taskText === "") return; // only block empty text
+  if (taskText === "") return;
 
   const li = document.createElement("li");
 
   // Build task content
-  let taskContent = taskText;
+  let taskContent = `${taskText}`;
   if (dueDate) taskContent += ` <small>(Due: ${dueDate})</small>`;
-  if (priority) taskContent += ` <small>[${priority}]</small>`;
+
+  // Add priority badge if selected
+  if (priority) {
+    let badgeClass = "";
+    if (priority === "High") badgeClass = "priority-badge priority-high";
+    if (priority === "Medium") badgeClass = "priority-badge priority-medium";
+    if (priority === "Low") badgeClass = "priority-badge priority-low";
+
+    taskContent += ` <span class="${badgeClass}">${priority}</span>`;
+  }
 
   li.innerHTML = `
     <span>${taskContent}</span>
@@ -29,11 +37,6 @@ function addTask() {
   li.dataset.dueDate = dueDate || "";
   li.dataset.priority = priority || "";
 
-  // Add priority styling
-  if (priority === "High") li.classList.add("priority-high");
-  if (priority === "Medium") li.classList.add("priority-medium");
-  if (priority === "Low") li.classList.add("priority-low");
-
   taskList.appendChild(li);
 
   taskInput.value = "";
@@ -41,6 +44,7 @@ function addTask() {
   priorityInput.value = "";
   checkReminders();
 }
+
 
 // Edit Task
 function editTask(button) {
