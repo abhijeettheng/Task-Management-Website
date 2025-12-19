@@ -38,6 +38,7 @@ header p {
   font-size: 0.9rem;
 }
 
+/* Task Input Section */
 .task-input {
   display: flex;
   flex-wrap: wrap;
@@ -47,13 +48,13 @@ header p {
 
 .task-input input[type="text"],
 .task-input input[type="date"],
-.task-input select {
+.task-input select,
+.task-input button {
   flex: 1 1 100%;
   min-width: 200px;
 }
 
 .task-input button {
-  flex: 1 1 100%;
   min-width: 120px;
   padding: 10px;
   background: #667eea;
@@ -64,10 +65,39 @@ header p {
   transition: 0.3s;
 }
 
-.task-input button:hover {
+.task-input button:hover,
+.input-group button:hover {
   background: #764ba2;
 }
 
+/* Input Group Styling */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 200px;
+}
+
+.input-group.full-width {
+  flex: 1 1 100%;
+}
+
+.input-group label {
+  font-size: 0.8rem;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.input-group button {
+  padding: 10px;
+  background: #667eea;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* Task List */
 .task-list {
   list-style: none;
 }
@@ -93,6 +123,7 @@ header p {
   background: #ffe5e5;
 }
 
+/* Task Actions */
 .task-actions button {
   margin-left: 8px;
   padding: 6px 10px;
@@ -121,6 +152,15 @@ header p {
   opacity: 0.8;
 }
 
+/* Edit Fields */
+.edit-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+/* Responsive Layout */
 @media (min-width: 600px) {
   .task-input input,
   .task-input select,
@@ -129,9 +169,42 @@ header p {
   }
 }
 
-.edit-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 10px;
+/* Priority Dropdown */
+.priority-select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-weight: 500;
+  cursor: pointer;
+  background: #f9f9f9;
+  transition: 0.3s;
+}
+
+.priority-select:hover {
+  border-color: #667eea;
+}
+
+/* Priority Badges in Task List */
+.priority-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-left: 8px;
+}
+
+.priority-high {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.priority-medium {
+  background: #f1c40f;
+  color: #fff;
+}
+
+.priority-low {
+  background: #2ecc71;
+  color: #fff;
 }
