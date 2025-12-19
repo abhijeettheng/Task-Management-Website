@@ -13,17 +13,34 @@
       <p>Organize your tasks with style</p>
     </header>
 
-    <div class="task-input">
-      <input type="text" id="taskInput" placeholder="Enter new task">
-      <input type="date" id="dueDate">
-      <select id="priority">
-        <option value="">Priority (optional)</option>
-        <option value="High">High 🔴</option>
-        <option value="Medium">Medium 🟡</option>
-        <option value="Low">Low 🟢</option>
-      </select>
-      <button onclick="addTask()">Add Task</button>
-    </div>
+<div class="task-input">
+  <div class="input-group">
+    <label for="taskInput">Task Name</label>
+    <input type="text" id="taskInput" placeholder="Enter new task">
+  </div>
+
+  <div class="input-group">
+    <label for="dueDate">Due Date</label>
+    <input type="date" id="dueDate">
+  </div>
+
+  <div class="input-group">
+  <label for="priority">Priority</label>
+  <select id="priority" class="priority-select">
+    <option value="">None</option>
+    <option value="High">🔴 High</option>
+    <option value="Medium">🟡 Medium</option>
+    <option value="Low">🟢 Low</option>
+  </select>
+</div>
+
+
+  <div class="input-group full-width">
+    <button onclick="addTask()">Add Task</button>
+  </div>
+</div>
+
+
 
     <ul id="taskList" class="task-list"></ul>
   </div>
