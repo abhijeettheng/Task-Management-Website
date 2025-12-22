@@ -208,3 +208,14 @@ header p {
   background: #2ecc71;
   color: #fff;
 }
+
+.recurring-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  margin-left: 8px;
+  background: #3498db;
+  color: #fff;
+}
