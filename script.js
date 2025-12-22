@@ -2,11 +2,14 @@ const taskList = document.getElementById("taskList");
 const taskInput = document.getElementById("taskInput");
 const dueDateInput = document.getElementById("dueDate");
 const priorityInput = document.getElementById("priority");
+const recurringInput = document.getElementById("recurring");
 
+// Add Task
 function addTask() {
   const taskText = taskInput.value.trim();
   const dueDate = dueDateInput.value;
   const priority = priorityInput.value;
+  const recurring = recurringInput.value;
 
   if (taskText === "") return;
 
@@ -16,14 +19,16 @@ function addTask() {
   let taskContent = `${taskText}`;
   if (dueDate) taskContent += ` <small>(Due: ${dueDate})</small>`;
 
-  // Add priority badge if selected
   if (priority) {
     let badgeClass = "";
     if (priority === "High") badgeClass = "priority-badge priority-high";
     if (priority === "Medium") badgeClass = "priority-badge priority-medium";
     if (priority === "Low") badgeClass = "priority-badge priority-low";
-
     taskContent += ` <span class="${badgeClass}">${priority}</span>`;
+  }
+
+  if (recurring) {
+    taskContent += ` <span class="recurring-badge">${recurring}</span>`;
   }
 
   li.innerHTML = `
@@ -36,15 +41,16 @@ function addTask() {
 
   li.dataset.dueDate = dueDate || "";
   li.dataset.priority = priority || "";
+  li.dataset.recurring = recurring || "";
 
   taskList.appendChild(li);
 
   taskInput.value = "";
   dueDateInput.value = "";
   priorityInput.value = "";
+  recurringInput.value = "";
   checkReminders();
 }
-
 
 // Edit Task
 function editTask(button) {
@@ -53,8 +59,8 @@ function editTask(button) {
   const currentText = span.textContent.split(" (Due:")[0].split(" [")[0];
   const currentDate = li.dataset.dueDate;
   const currentPriority = li.dataset.priority;
+  const currentRecurring = li.dataset.recurring;
 
-  // Replace span with input fields and wrap them in a div
   span.outerHTML = `
     <div class="edit-fields">
       <input type="text" value="${currentText}" />
@@ -65,10 +71,15 @@ function editTask(button) {
         <option value="Medium" ${currentPriority === "Medium" ? "selected" : ""}>Medium 🟡</option>
         <option value="Low" ${currentPriority === "Low" ? "selected" : ""}>Low 🟢</option>
       </select>
+      <select>
+        <option value="">Recurring</option>
+        <option value="Daily" ${currentRecurring === "Daily" ? "selected" : ""}>Daily</option>
+        <option value="Weekly" ${currentRecurring === "Weekly" ? "selected" : ""}>Weekly</option>
+        <option value="Monthly" ${currentRecurring === "Monthly" ? "selected" : ""}>Monthly</option>
+      </select>
     </div>
   `;
 
-  // Replace buttons with Save and Delete
   const actions = button.parentElement;
   actions.innerHTML = `
     <button class="save" onclick="saveTask(this)">Save</button>
@@ -79,33 +90,48 @@ function editTask(button) {
 // Save Edited Task
 function saveTask(button) {
   const li = button.parentElement.parentElement;
-  const inputs = li.querySelectorAll("input, select");
+  const editFields = li.querySelector(".edit-fields");
+  const inputs = editFields.querySelectorAll("input, select");
+
   const newText = inputs[0].value.trim();
   const newDate = inputs[1].value;
   const newPriority = inputs[2].value;
+  const newRecurring = inputs[3] ? inputs[3].value : "";
 
+  // Build task content
   let taskContent = newText;
   if (newDate) taskContent += ` <small>(Due: ${newDate})</small>`;
-  if (newPriority) taskContent += ` <small>[${newPriority}]</small>`;
 
-  inputs[0].outerHTML = `<span>${taskContent}</span>`;
-  inputs[1].remove();
-  inputs[2].remove();
+  if (newPriority) {
+    let badgeClass = "";
+    if (newPriority === "High") badgeClass = "priority-badge priority-high";
+    if (newPriority === "Medium") badgeClass = "priority-badge priority-medium";
+    if (newPriority === "Low") badgeClass = "priority-badge priority-low";
+    taskContent += ` <span class="${badgeClass}">${newPriority}</span>`;
+  }
 
+  if (newRecurring) {
+    taskContent += ` <span class="recurring-badge">${newRecurring}</span>`;
+  }
+
+  // Replace the entire edit-fields div with a span
+  editFields.outerHTML = `<span>${taskContent}</span>`;
+
+  // Update dataset
   li.dataset.dueDate = newDate || "";
   li.dataset.priority = newPriority || "";
+  li.dataset.recurring = newRecurring || "";
 
-  // Reset priority styling
-  li.classList.remove("priority-high", "priority-medium", "priority-low");
-  if (newPriority === "High") li.classList.add("priority-high");
-  if (newPriority === "Medium") li.classList.add("priority-medium");
-  if (newPriority === "Low") li.classList.add("priority-low");
+  // Restore buttons
+  const actions = li.querySelector(".task-actions");
+  actions.innerHTML = `
+    <button class="edit" onclick="editTask(this)">Edit</button>
+    <button class="delete" onclick="deleteTask(this)">Delete</button>
+  `;
 
-  button.textContent = "Edit";
-  button.className = "edit";
-  button.setAttribute("onclick", "editTask(this)");
   checkReminders();
 }
+
 
 // Delete Task
 function deleteTask(button) {
@@ -128,4 +154,36 @@ function checkReminders() {
   });
 }
 
+// Handle Recurring Tasks
+function handleRecurringTasks() {
+  const today = new Date();
+  const tasks = taskList.querySelectorAll("li");
+
+  tasks.forEach((li) => {
+    const recurring = li.dataset.recurring;
+    const dueDate = li.dataset.dueDate;
+
+    if (!recurring || !dueDate) return;
+
+    const taskDate = new Date(dueDate);
+    const todayStr = today.toISOString().split("T")[0];
+
+    if (dueDate === todayStr) {
+      let nextDate = new Date(taskDate);
+      if (recurring === "Daily") nextDate.setDate(taskDate.getDate() + 1);
+      if (recurring === "Weekly") nextDate.setDate(taskDate.getDate() + 7);
+      if (recurring === "Monthly") nextDate.setMonth(taskDate.getMonth() + 1);
+
+      const newTask = li.cloneNode(true);
+      newTask.dataset.dueDate = nextDate.toISOString().split("T")[0];
+      newTask.querySelector("span").innerHTML = li.querySelector("span").innerHTML.replace(
+        `(Due: ${dueDate})`,
+        `(Due: ${newTask.dataset.dueDate})`
+      );
+      taskList.appendChild(newTask);
+    }
+  });
+}
+
+setInterval(handleRecurringTasks, 60000);
 setInterval(checkReminders, 60000);
