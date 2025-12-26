@@ -4,8 +4,57 @@ const dueDateInput = document.getElementById("dueDate");
 const priorityInput = document.getElementById("priority");
 const recurringInput = document.getElementById("recurring");
 
-// Add Task
+// --- Login & Personalization ---
+function login(username) {
+  localStorage.setItem("currentUser", username);
+
+  // Check if user has existing tasks
+  const existingTasks = localStorage.getItem(`tasks_${username}`);
+  if (!existingTasks) {
+    // First-time user — initialize empty task list
+    localStorage.setItem(`tasks_${username}`, JSON.stringify([]));
+  }
+
+  loadTasks(username);
+}
+
+
+function loginUser() {
+  const username = document.getElementById("username").value.trim();
+  if (username) {
+    login(username);
+    document.querySelector(".login-container").style.display = "none";
+    document.querySelector(".app-container").style.display = "block";
+  } else {
+    alert("Please enter a username!");
+  }
+}
+
+function logoutUser() {
+  localStorage.removeItem("currentUser");
+  taskList.innerHTML = ""; // clear tasks from view
+  document.querySelector(".app-container").style.display = "none";
+  document.querySelector(".login-container").style.display = "block";
+}
+
+function saveTasks(username, tasks) {
+  localStorage.setItem(`tasks_${username}`, JSON.stringify(tasks));
+}
+
+function loadTasks(username) {
+  const tasks = JSON.parse(localStorage.getItem(`tasks_${username}`)) || [];
+  renderTasks(tasks);
+}
+
+function renderTasks(tasks) {
+  taskList.innerHTML = tasks.join("");
+}
+
+// --- Task Management ---
 function addTask() {
+  const currentUser = localStorage.getItem("currentUser");
+  if (!currentUser) return alert("Please log in first!");
+
   const taskText = taskInput.value.trim();
   const dueDate = dueDateInput.value;
   const priority = priorityInput.value;
@@ -44,6 +93,10 @@ function addTask() {
   li.dataset.recurring = recurring || "";
 
   taskList.appendChild(li);
+
+  // Save updated tasks AFTER adding
+  const tasks = Array.from(taskList.querySelectorAll("li")).map(li => li.outerHTML);
+  saveTasks(currentUser, tasks);
 
   taskInput.value = "";
   dueDateInput.value = "";
@@ -114,29 +167,38 @@ function saveTask(button) {
     taskContent += ` <span class="recurring-badge">${newRecurring}</span>`;
   }
 
-  // Replace the entire edit-fields div with a span
   editFields.outerHTML = `<span>${taskContent}</span>`;
 
-  // Update dataset
   li.dataset.dueDate = newDate || "";
   li.dataset.priority = newPriority || "";
   li.dataset.recurring = newRecurring || "";
 
-  // Restore buttons
   const actions = li.querySelector(".task-actions");
   actions.innerHTML = `
     <button class="edit" onclick="editTask(this)">Edit</button>
     <button class="delete" onclick="deleteTask(this)">Delete</button>
   `;
 
+  // Save updated tasks
+  const currentUser = localStorage.getItem("currentUser");
+  if (currentUser) {
+    const tasks = Array.from(taskList.querySelectorAll("li")).map(li => li.outerHTML);
+    saveTasks(currentUser, tasks);
+  }
+
   checkReminders();
 }
-
 
 // Delete Task
 function deleteTask(button) {
   const li = button.parentElement.parentElement;
   taskList.removeChild(li);
+
+  const currentUser = localStorage.getItem("currentUser");
+  if (currentUser) {
+    const tasks = Array.from(taskList.querySelectorAll("li")).map(li => li.outerHTML);
+    saveTasks(currentUser, tasks);
+  }
 }
 
 // Reminder Check
@@ -183,7 +245,6 @@ function handleRecurringTasks() {
       taskList.appendChild(newTask);
     }
   });
-}
-
+} // ✅ This closing brace was missing
 setInterval(handleRecurringTasks, 60000);
 setInterval(checkReminders, 60000);
