@@ -7,50 +7,59 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="app-container">
+
+  <!-- Login Screen -->
+  <div class="login-container">
+    <label for="username">Username</label>
+    <input type="text" id="username" placeholder="Enter username">
+    <button onclick="loginUser()">Login</button>
+  </div>
+
+  <!-- Task Manager App (hidden until login) -->
+  <div class="app-container" style="display: none;">
     <header>
+      <div class="logout-container">
+        <button onclick="logoutUser()">Logout</button>
+      </div>
       <h1>✨ Task Manager</h1>
       <p>Organize your tasks with style</p>
     </header>
 
-<div class="task-input">
-  <div class="input-group">
-    <label for="taskInput">Task Name</label>
-    <input type="text" id="taskInput" placeholder="Enter new task">
-  </div>
+    <div class="task-input">
+      <div class="input-group">
+        <label for="taskInput">Task Name</label>
+        <input type="text" id="taskInput" placeholder="Enter new task">
+      </div>
 
-  <div class="input-group">
-    <label for="dueDate">Due Date</label>
-    <input type="date" id="dueDate">
-  </div>
+      <div class="input-group">
+        <label for="dueDate">Due Date</label>
+        <input type="date" id="dueDate">
+      </div>
 
-  <div class="input-group">
-  <label for="priority">Priority</label>
-  <select id="priority" class="priority-select">
-    <option value="">None</option>
-    <option value="High">🔴 High</option>
-    <option value="Medium">🟡 Medium</option>
-    <option value="Low">🟢 Low</option>
-  </select>
-</div>
+      <div class="input-group">
+        <label for="priority">Priority</label>
+        <select id="priority" class="priority-select">
+          <option value="">None</option>
+          <option value="High">🔴 High</option>
+          <option value="Medium">🟡 Medium</option>
+          <option value="Low">🟢 Low</option>
+        </select>
+      </div>
 
-<div class="input-group">
-  <label for="recurring">Recurring</label>
-  <select id="recurring">
-    <option value="">None</option>
-    <option value="Daily">Daily</option>
-    <option value="Weekly">Weekly</option>
-    <option value="Monthly">Monthly</option>
-  </select>
-</div>
+      <div class="input-group">
+        <label for="recurring">Recurring</label>
+        <select id="recurring">
+          <option value="">None</option>
+          <option value="Daily">Daily</option>
+          <option value="Weekly">Weekly</option>
+          <option value="Monthly">Monthly</option>
+        </select>
+      </div>
 
-  <div class="input-group full-width">
-    <button onclick="addTask()">Add Task</button>
-  </div>
-</div>
-
-
-
+      <div class="input-group full-width">
+        <button onclick="addTask()">Add Task</button>
+      </div>
+    </div>
 
     <ul id="taskList" class="task-list"></ul>
   </div>
