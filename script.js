@@ -8,31 +8,30 @@ const recurringInput = document.getElementById("recurring");
 function login(username) {
   localStorage.setItem("currentUser", username);
 
-  // Check if user has existing tasks
-  const existingTasks = localStorage.getItem(`tasks_${username}`);
-  if (!existingTasks) {
-    // First-time user — initialize empty task list
+  if (!localStorage.getItem(`tasks_${username}`)) {
     localStorage.setItem(`tasks_${username}`, JSON.stringify([]));
   }
 
   loadTasks(username);
 }
 
-
 function loginUser() {
   const username = document.getElementById("username").value.trim();
   if (username) {
     login(username);
     document.querySelector(".login-container").style.display = "none";
-    document.querySelector(".app-container").style.display = "block";
+    const app = document.querySelector(".app-container");
+    app.style.display = "block";
+    app.classList.add("active");
   } else {
     alert("Please enter a username!");
   }
 }
 
+
 function logoutUser() {
   localStorage.removeItem("currentUser");
-  taskList.innerHTML = ""; // clear tasks from view
+  taskList.innerHTML = "";
   document.querySelector(".app-container").style.display = "none";
   document.querySelector(".login-container").style.display = "block";
 }
@@ -48,6 +47,8 @@ function loadTasks(username) {
 
 function renderTasks(tasks) {
   taskList.innerHTML = tasks.join("");
+  updateProgress();
+  updateDashboard(); // refresh dashboard after loading
 }
 
 // --- Task Management ---
@@ -81,6 +82,7 @@ function addTask() {
   }
 
   li.innerHTML = `
+    <input type="checkbox" class="task-check" onchange="updateProgress()" />
     <span>${taskContent}</span>
     <div class="task-actions">
       <button class="edit" onclick="editTask(this)">Edit</button>
@@ -94,7 +96,7 @@ function addTask() {
 
   taskList.appendChild(li);
 
-  // Save updated tasks AFTER adding
+  // Save updated tasks
   const tasks = Array.from(taskList.querySelectorAll("li")).map(li => li.outerHTML);
   saveTasks(currentUser, tasks);
 
@@ -102,10 +104,30 @@ function addTask() {
   dueDateInput.value = "";
   priorityInput.value = "";
   recurringInput.value = "";
+
   checkReminders();
+  updateDashboard();
 }
 
-// Edit Task
+// --- Progress Tracking ---
+function updateProgress() {
+  const tasks = taskList.querySelectorAll("li");
+  const completed = taskList.querySelectorAll(".task-check:checked").length;
+  const total = tasks.length;
+
+  const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+  document.getElementById("progressFill").style.width = `${percent}%`;
+  document.getElementById("progressText").textContent = `${percent}% completed`;
+
+  // Save updated tasks with checkbox state
+  const currentUser = localStorage.getItem("currentUser");
+  if (currentUser) {
+    const tasksHTML = Array.from(taskList.querySelectorAll("li")).map(li => li.outerHTML);
+    saveTasks(currentUser, tasksHTML);
+  }
+}
+
+// --- Edit Task ---
 function editTask(button) {
   const li = button.parentElement.parentElement;
   const span = li.querySelector("span");
@@ -140,7 +162,7 @@ function editTask(button) {
   `;
 }
 
-// Save Edited Task
+// --- Save Edited Task ---
 function saveTask(button) {
   const li = button.parentElement.parentElement;
   const editFields = li.querySelector(".edit-fields");
@@ -179,7 +201,6 @@ function saveTask(button) {
     <button class="delete" onclick="deleteTask(this)">Delete</button>
   `;
 
-  // Save updated tasks
   const currentUser = localStorage.getItem("currentUser");
   if (currentUser) {
     const tasks = Array.from(taskList.querySelectorAll("li")).map(li => li.outerHTML);
@@ -187,9 +208,10 @@ function saveTask(button) {
   }
 
   checkReminders();
+  updateDashboard();
 }
 
-// Delete Task
+// --- Delete Task ---
 function deleteTask(button) {
   const li = button.parentElement.parentElement;
   taskList.removeChild(li);
@@ -199,9 +221,11 @@ function deleteTask(button) {
     const tasks = Array.from(taskList.querySelectorAll("li")).map(li => li.outerHTML);
     saveTasks(currentUser, tasks);
   }
+
+  updateDashboard();
 }
 
-// Reminder Check
+// --- Reminder Check ---
 function checkReminders() {
   const today = new Date().toISOString().split("T")[0];
   const tasks = taskList.querySelectorAll("li");
@@ -216,9 +240,9 @@ function checkReminders() {
   });
 }
 
-// Handle Recurring Tasks
 function handleRecurringTasks() {
   const today = new Date();
+  const todayStr = today.toISOString().split("T")[0];
   const tasks = taskList.querySelectorAll("li");
 
   tasks.forEach((li) => {
@@ -227,24 +251,37 @@ function handleRecurringTasks() {
 
     if (!recurring || !dueDate) return;
 
-    const taskDate = new Date(dueDate);
-    const todayStr = today.toISOString().split("T")[0];
-
     if (dueDate === todayStr) {
+      const taskDate = new Date(dueDate);
       let nextDate = new Date(taskDate);
+
       if (recurring === "Daily") nextDate.setDate(taskDate.getDate() + 1);
       if (recurring === "Weekly") nextDate.setDate(taskDate.getDate() + 7);
       if (recurring === "Monthly") nextDate.setMonth(taskDate.getMonth() + 1);
 
       const newTask = li.cloneNode(true);
-      newTask.dataset.dueDate = nextDate.toISOString().split("T")[0];
-      newTask.querySelector("span").innerHTML = li.querySelector("span").innerHTML.replace(
-        `(Due: ${dueDate})`,
-        `(Due: ${newTask.dataset.dueDate})`
-      );
+      const nextStr = nextDate.toISOString().split("T")[0];
+      newTask.dataset.dueDate = nextStr;
+
+      const span = newTask.querySelector("span");
+      if (span) {
+        span.innerHTML = span.innerHTML.replace(`(Due: ${dueDate})`, `(Due: ${nextStr})`);
+      }
+
       taskList.appendChild(newTask);
     }
   });
-} // ✅ This closing brace was missing
-setInterval(handleRecurringTasks, 60000);
-setInterval(checkReminders, 60000);
+
+  updateDashboard();
+  checkReminders();
+}
+(function restoreSession() {
+  const currentUser = localStorage.getItem("currentUser");
+  if (currentUser) {
+    document.querySelector(".login-container").style.display = "none";
+    const app = document.querySelector(".app-container");
+    app.style.display = "block";
+    app.classList.add("active");
+    loadTasks(currentUser);
+  }
+})();
