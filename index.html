@@ -1,39 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Task Manager</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer src="script.js"></script>
 </head>
 <body>
 
   <!-- Login Screen -->
-  <div class="login-container">
+  <main class="login-container" aria-labelledby="login-title">
+    <h1 id="login-title">Welcome</h1>
     <label for="username">Username</label>
-    <input type="text" id="username" placeholder="Enter username">
-    <button onclick="loginUser()">Login</button>
-  </div>
+    <input type="text" id="username" placeholder="Enter username" autocomplete="username" />
+    <button id="loginBtn">Login</button>
+  </main>
 
-  <!-- Task Manager App (hidden until login) -->
-  <div class="app-container" style="display: none;">
-    <header>
-      <div class="logout-container">
-        <button onclick="logoutUser()">Logout</button>
-      </div>
-      <h1>✨ Task Manager</h1>
-      <p>Organize your tasks with style</p>
-    </header>
+  <!-- Sidebar Navigation -->
+<aside class="sidebar">
+  <button id="addTaskSidebarBtn">➕ Add Task</button>
 
-    <div class="task-input">
+  <nav class="nav-links">
+    <ul>
+      <li><span>📥 Inbox</span> <span class="count" id="inboxCount">0</span></li>
+      <li><span>📅 Today</span></li>
+      <li><span>📆 Upcoming</span></li>
+      <li><span>✅ Completed</span></li>
+    </ul>
+  </nav>
+</aside>
+
+
+<!-- Task Manager App (after login) -->
+<!-- Task Manager App (after login) -->
+<div class="app-container">
+  <header>
+    <div class="logout-container">
+      <button id="logoutBtn">Logout</button>
+    </div>
+    <h1>✨ Task Manager</h1>
+    <p>Organize your tasks with style</p>
+  </header>
+
+    
+    <!-- Task Input Form 
+    <section class="task-input" aria-labelledby="task-input-title">
+      <h2 id="task-input-title" class="visually-hidden">Add task</h2>
       <div class="input-group">
-        <label for="taskInput">Task Name</label>
-        <input type="text" id="taskInput" placeholder="Enter new task">
+        <label for="taskInput">Task name</label>
+        <input type="text" id="taskInput" placeholder="Enter new task" />
       </div>
 
       <div class="input-group">
-        <label for="dueDate">Due Date</label>
-        <input type="date" id="dueDate">
+        <label for="dueDate">Due date</label>
+        <input type="date" id="dueDate" />
       </div>
 
       <div class="input-group">
@@ -57,13 +79,20 @@
       </div>
 
       <div class="input-group full-width">
-        <button onclick="addTask()">Add Task</button>
+        <button id="addTaskBtn">Add task</button>
       </div>
-    </div>
+    </section>-->
 
-    <ul id="taskList" class="task-list"></ul>
+
+
+    <!-- Task list -->
+    <section aria-labelledby="task-list-title">
+      <h2 id="task-list-title" class="visually-hidden">Tasks</h2>
+      <ul id="taskList" class="task-list"></ul>
+    </section>
   </div>
+  <script src="script.js" defer></script>
 
-  <script src="script.js"></script>
+
 </body>
 </html>
