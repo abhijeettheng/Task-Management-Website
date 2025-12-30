@@ -18,36 +18,61 @@
     <button id="loginBtn">Login</button>
   </main>
 
-  <!-- Sidebar Navigation -->
-<aside class="sidebar">
-  <button id="addTaskSidebarBtn">➕ Add Task</button>
+  <!-- Sidebar Navigation (hidden until login) -->
+  <aside class="sidebar" aria-label="Sidebar navigation">
+    <button id="addTaskSidebarBtn">➕ Add Task</button>
+    <nav class="nav-links">
+      <ul>
+        <li data-view="inbox"><span>📥 Inbox</span> <span class="count" id="inboxCount">0</span></li>
+        <li data-view="today"><span>📅 Today</span></li>
+        <li data-view="upcoming"><span>📆 Upcoming</span></li>
+        <li data-view="completed"><span>✅ Completed</span></li>
+      </ul>
+    </nav>
+  </aside>
 
-  <nav class="nav-links">
-    <ul>
-      <li><span>📥 Inbox</span> <span class="count" id="inboxCount">0</span></li>
-      <li><span>📅 Today</span></li>
-      <li><span>📆 Upcoming</span></li>
-      <li><span>✅ Completed</span></li>
-    </ul>
-  </nav>
-</aside>
+  <!-- App Container -->
+  <div class="app-container">
+    <header class="app-header">
+      <h1>✨ Task Manager</h1>
+      <p>Organize your tasks with style</p>
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </header>
 
+    <!-- Task Sections -->
+    <main class="content">
+      <section class="task-section" id="overdueSection" aria-labelledby="overdueTitle">
+        <h3 id="overdueTitle">🔴 Overdue</h3>
+        <ul id="overdueList" class="task-list"></ul>
+      </section>
 
-<!-- Task Manager App (after login) -->
-<!-- Task Manager App (after login) -->
-<div class="app-container">
-  <header>
-    <div class="logout-container">
-      <button id="logoutBtn">Logout</button>
-    </div>
-    <h1>✨ Task Manager</h1>
-    <p>Organize your tasks with style</p>
-  </header>
+      <section class="task-section" id="todaySection" aria-labelledby="todayTitle">
+        <h3 id="todayTitle">📅 Today</h3>
+        <ul id="todayList" class="task-list"></ul>
+      </section>
 
-    
-    <!-- Task Input Form 
-    <section class="task-input" aria-labelledby="task-input-title">
-      <h2 id="task-input-title" class="visually-hidden">Add task</h2>
+      <section class="task-section" id="upcomingSection" aria-labelledby="upcomingTitle">
+        <h3 id="upcomingTitle">📆 Upcoming</h3>
+        <ul id="upcomingList" class="task-list"></ul>
+      </section>
+
+      <section class="task-section" id="inboxSection" aria-labelledby="inboxTitle">
+        <h3 id="inboxTitle">📥 Inbox</h3>
+        <ul id="inboxList" class="task-list"></ul>
+      </section>
+
+      <section class="task-section" id="completedSection" aria-labelledby="completedTitle">
+        <h3 id="completedTitle">✅ Completed</h3>
+        <ul id="completedList" class="task-list"></ul>
+      </section>
+    </main>
+  </div>
+
+  <!-- Add Task Modal -->
+  <div class="modal-backdrop" id="taskModalBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="addTaskTitle">
+      <h2 id="addTaskTitle">Add task</h2>
+
       <div class="input-group">
         <label for="taskInput">Task name</label>
         <input type="text" id="taskInput" placeholder="Enter new task" />
@@ -78,21 +103,12 @@
         </select>
       </div>
 
-      <div class="input-group full-width">
-        <button id="addTaskBtn">Add task</button>
+      <div class="modal-actions">
+        <button id="confirmAddTaskBtn" class="primary">Add task</button>
+        <button id="cancelAddTaskBtn" class="secondary">Cancel</button>
       </div>
-    </section>-->
-
-
-
-    <!-- Task list -->
-    <section aria-labelledby="task-list-title">
-      <h2 id="task-list-title" class="visually-hidden">Tasks</h2>
-      <ul id="taskList" class="task-list"></ul>
-    </section>
+    </div>
   </div>
-  <script src="script.js" defer></script>
-
 
 </body>
 </html>
