@@ -168,29 +168,25 @@ function addTaskFromModal() {
 // Rendering
 function renderAllSections() {
   // Clear lists
-  [overdueList, todayList, upcomingList, inboxList, completedList].forEach(ul => ul.innerHTML = "");
+  [todayList, completedList].forEach(ul => ul.innerHTML = "");
 
-  const today = todayStr();
-
-  // Categorize
-  const overdue = [];
   const todayItems = [];
-  const upcoming = [];
-  const inbox = [];
   const completed = [];
 
   tasks.forEach(t => {
     if (t.completed) {
       completed.push(t);
-    } else if (!t.dueDate) {
-      inbox.push(t);
     } else {
-      const cmp = compareDate(t.dueDate, today);
-      if (cmp < 0) overdue.push(t);
-      else if (cmp === 0) todayItems.push(t);
-      else upcoming.push(t);
+      todayItems.push(t); // ✅ everything else goes to Today
     }
   });
+
+  todayItems.forEach(t => todayList.appendChild(taskCard(t)));
+  completed.forEach(t => completedList.appendChild(taskCard(t)));
+
+  inboxCount.textContent = 0; // no inbox count needed anymore
+}
+
 
   // Render helpers
   overdue.forEach(t => overdueList.appendChild(taskCard(t)));
@@ -200,7 +196,7 @@ function renderAllSections() {
   completed.forEach(t => completedList.appendChild(taskCard(t)));
 
   inboxCount.textContent = inbox.length;
-}
+
 
 function taskCard(t) {
   const li = document.createElement("li");
