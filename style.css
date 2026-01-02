@@ -283,4 +283,8 @@ body {
 /* Utilities */
 .hidden { display: none !important; }
 
-
+/* Highlight overdue tasks */
+.task-card.overdue {
+  background-color: #ffe5e5; /* light red */
+  border: 1px solid #ff4d4f; /* stronger red border */
+}
