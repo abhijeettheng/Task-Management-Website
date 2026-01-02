@@ -145,9 +145,9 @@ function clearModalInputs() {
 }
 function addTaskFromModal() {
   const title = taskInput.value.trim();
-  const dueDate = (dueDateInput.value || "").trim(); // YYYY-MM-DD or ""
-  const priority = prioritySelect.value || ""; // High/Medium/Low/""
-  const recurring = recurringSelect.value || ""; // Daily/Weekly/Monthly/""
+  const dueDate = (dueDateInput.value || "").trim();
+  const priority = prioritySelect.value || "";
+  const recurring = recurringSelect.value || "";
 
   if (!title) { alert("Please enter a task name."); return; }
 
@@ -162,8 +162,11 @@ function addTaskFromModal() {
   tasks.push(newTask);
   saveTasks();
   renderAllSections();
+
+  // ✅ Always close modal
   closeAddTaskModal();
 }
+
 
 // Rendering
 function renderAllSections() {
@@ -201,6 +204,12 @@ function renderAllSections() {
 function taskCard(t) {
   const li = document.createElement("li");
   li.className = "task-card";
+
+  //Highlight overdue tasks
+  const today = todayStr();
+  if (!t.completed && t.dueDate && compareDate(t.dueDate, today) < 0) {
+    li.classList.add("overdue");
+  }
 
   const main = document.createElement("div");
   main.className = "task-main";
