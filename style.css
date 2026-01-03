@@ -73,7 +73,7 @@ body {
 }
 .login-container button:hover { background: var(--accent-hover); }
 
-/* Sidebar */
+/* Sidebar 
 .sidebar {
   position: fixed;
   top: 0; left: 0;
@@ -83,8 +83,9 @@ body {
   color: var(--text);
   box-shadow: 2px 0 10px rgba(0,0,0,0.08);
   padding: 16px;
-  display: none; /* hidden until login */
+  display: none; /* hidden until login 
 }
+  */
 .sidebar button {
   width: 100%;
   padding: 10px 12px;
@@ -138,8 +139,22 @@ body {
   margin: 0;
   color: var(--muted);
 }
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100vh;
+  background: var(--cream-dark);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* ✅ pushes logout to bottom */
+  padding: 16px;
+}
+
 .logout-btn {
-  margin-left: auto;
+  align-self: flex-start; /* ✅ bottom left */
+  margin-top: auto;
   padding: 8px 12px;
   border: none;
   border-radius: 8px;
@@ -148,6 +163,7 @@ body {
   font-weight: 600;
   cursor: pointer;
 }
+
 
 /* Sections */
 .content {
@@ -288,3 +304,4 @@ body {
   background-color: #ffe5e5; /* light red */
   border: 1px solid #ff4d4f; /* stronger red border */
 }
+
